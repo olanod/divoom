@@ -5,6 +5,8 @@ members = [
     "divoom_gateway",
 ]
 
+resolver = "2"
+
 [profile.dev]
 panic = "abort"             # Abort on panic to make it more friendly for debugger
 

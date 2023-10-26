@@ -26,7 +26,7 @@ pub struct DivoomScheduleManager {
 
 impl DivoomScheduleManager {
     #[cfg(feature = "animation-builder")]
-    pub fn from_config(
+    pub async fn from_config(
         device_address: String,
         schedules: Vec<DivoomScheduleConfigCronJob>,
         template_manager: Arc<DivoomAnimationTemplateManager>,
@@ -48,13 +48,13 @@ impl DivoomScheduleManager {
         Ok(DivoomScheduleManager {
             device_address,
             jobs,
-            job_scheduler: JobScheduler::new().unwrap(),
+            job_scheduler: JobScheduler::new().await.unwrap(),
             template_manager,
         })
     }
 
     #[cfg(feature = "animation-builder")]
-    pub fn start(&mut self) {
+    pub async fn start(&mut self) {
         for job in &self.jobs {
             let cron = job.cron.clone();
 
@@ -92,14 +92,15 @@ impl DivoomScheduleManager {
 
             self.job_scheduler
                 .add(Job::new_async(cron.as_ref(), job_closure).unwrap())
+                .await
                 .unwrap();
         }
 
-        self.job_scheduler.start().unwrap();
+        self.job_scheduler.start().await.unwrap();
     }
 
     #[cfg(not(feature = "animation-builder"))]
-    pub fn from_config(
+    pub async fn from_config(
         device_address: String,
         schedules: Vec<DivoomScheduleConfigCronJob>,
     ) -> DivoomAPIResult<Self> {
@@ -120,12 +121,12 @@ impl DivoomScheduleManager {
         Ok(DivoomScheduleManager {
             device_address,
             jobs,
-            job_scheduler: JobScheduler::new().unwrap(),
+            job_scheduler: JobScheduler::new().await.unwrap(),
         })
     }
 
     #[cfg(not(feature = "animation-builder"))]
-    pub fn start(&mut self) {
+    pub async fn start(&mut self) {
         for job in &self.jobs {
             let cron = job.cron.clone();
 
@@ -161,9 +162,10 @@ impl DivoomScheduleManager {
 
             self.job_scheduler
                 .add(Job::new_async(cron.as_ref(), job_closure).unwrap())
+                .await
                 .unwrap();
         }
 
-        self.job_scheduler.start().unwrap();
+        self.job_scheduler.start().await.unwrap();
     }
 }

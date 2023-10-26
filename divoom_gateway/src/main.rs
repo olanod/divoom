@@ -88,6 +88,7 @@ async fn main() -> Result<(), std::io::Error> {
             config.schedules,
             animation_template_manager.clone(),
         )
+        .await
         .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidInput, e))?;
 
         println!(
@@ -95,7 +96,7 @@ async fn main() -> Result<(), std::io::Error> {
             schedule_count, config.device_address
         );
 
-        schedule_manager.start();
+        schedule_manager.start().await;
     }
 
     let url = format!("http://{}:{}", config.server_address, config.server_port);
